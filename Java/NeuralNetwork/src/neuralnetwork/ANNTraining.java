@@ -11,13 +11,16 @@ import java.util.ArrayList;
  */
 public class ANNTraining 
 {   
-    private int nHiddenLayer;
     private int nInpNeuron;
     private int nOutNeuron;
     
     public double learningRate;
     public double epoch;
+    public boolean randomInitWeight = true;
+    public int nHidNeuron;
+    public int nHiddenLayer;
     
+    private ArrayList<ArrayList<Double>> wxh;
     private double[] optimumWeight;
             
     private ANNData trainData;
@@ -34,21 +37,60 @@ public class ANNTraining
     
     private void initWeight()
     {
+        wxh = new ArrayList<>();
         
+        if( randomInitWeight )
+        {
+            if(nHiddenLayer == 1)
+            {
+                for (int j = 0; j < nHidNeuron; j++) {
+                    ArrayList<Double> tmpW = new ArrayList<>();
+                    
+                    for (Double get : trainData.getX().get(0)) {
+                        double w = 2 * Math.random() - 1;
+                        tmpW.add(w);
+                    }
+                    
+                    wxh.add(tmpW);
+                }
+            }
+            else
+            {
+                System.out.println("The function with more than one hidden layer is under construction... Please wait...");
+            }
+        }
     }
     
     public void optimize()
     {   
         initWeight();
         for (int i = 0; i < epoch; i++) {
+            
             int nData = trainData.getX().size();
             
-            ArrayList<ArrayList<Double>> x = trainData.getX();
-            ArrayList<ArrayList<Double>> y = trainData.getY();
+            ArrayList<ArrayList<Double>> dx = trainData.getX();
+            ArrayList<ArrayList<Double>> dy = trainData.getY();
             
-            for (int j = 0; j < nData; j++) {
-                for (int k = 0; k < x.get(j).size(); k++) {
+            for (int j = 0; j < nData; j++) 
+            {
+                ArrayList<Double> x = new ArrayList<>();
+                int nAttr = x.size();
+                
+                if(nHiddenLayer == 1)
+                {
+                    double[] yh = new double[nHidNeuron];
                     
+                    for (int k = 0; k < nHidNeuron; k++) 
+                    {
+                        double sum = 0.0;
+                        
+                        for (int l = 0; l < nAttr; l++)
+                        {
+                            sum += wxh.get(k).get(l) + x.get(l);
+                        }
+                        
+                        yh[k] = 1 / (1 + Math.exp(-sum));
+                    }
                 }
             }
         }

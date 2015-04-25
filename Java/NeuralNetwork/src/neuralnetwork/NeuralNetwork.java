@@ -17,7 +17,12 @@ public class NeuralNetwork {
         
         ANNTraining ann = new ANNTraining();
         ann.setData(trainData);
-        ann.epoch = 10;
+        
+        ann.epoch = 1;
+        ann.learningRate = 0.1;
+        ann.nHidNeuron = 3;
+        ann.nHiddenLayer = 1;
+        
         ann.optimize();
         
     }
