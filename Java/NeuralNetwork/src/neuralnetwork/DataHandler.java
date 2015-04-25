@@ -23,7 +23,7 @@ public class DataHandler
     
     private BufferedReader reader;
     
-    private String errorMessage = "End of DataHandler ";
+    private String errorMessage = "Error DataHandler - ";
     
     private int nInput;
     private int nOutput;
@@ -147,9 +147,6 @@ public class DataHandler
                 System.exit(0);
             }
             
-            System.out.println(dx.toString());
-            System.out.println(dy.toString());
-            
             data.setX(dx);
             data.setY(dy);
         } 
@@ -167,7 +164,7 @@ public class DataHandler
         }
         finally
         {
-            System.out.println(errorMessage);
+            System.out.println("No error in DataHandler.");
         }
     }
     
