@@ -50,9 +50,9 @@ public class DataHandler
         return ((nInput == 0) && (nOutput == 0));
     }
     
-    private boolean isValidInputOutput()
+    private boolean isValidInputOutput(int nElmt)
     {
-        return !isNotSetInputOutput();
+        return !isNotSetInputOutput() && (nInput + nOutput <= nElmt) && nInput > 0 && nOutput > 0;
     }
     
     public void loadData(String filename)
@@ -76,7 +76,7 @@ public class DataHandler
                 {
                     String[] elm = line.split(" ");
                     
-                    if( !isValidInputOutput() )
+                    if( !isValidInputOutput(elm.length) )
                     {
                         nOutput = 1;
                         nInput = elm.length - nOutput;
