@@ -21,6 +21,7 @@ public class ANNTraining
     public int nHiddenLayer;
     
     private ArrayList<ArrayList<Double>> wxh;
+    private double[] bh;
     private double[] optimumWeight;
             
     private ANNData trainData;
@@ -43,13 +44,19 @@ public class ANNTraining
         {
             if(nHiddenLayer == 1)
             {
+                bh = new double[nHidNeuron];
+                
                 for (int j = 0; j < nHidNeuron; j++) {
+                    
                     ArrayList<Double> tmpW = new ArrayList<>();
                     
                     for (Double get : trainData.getX().get(0)) {
                         double w = 2 * Math.random() - 1;
                         tmpW.add(w);
                     }
+                    
+                    double bias = 2 * Math.random() - 1;
+                    bh[j] = bias;
                     
                     wxh.add(tmpW);
                 }
@@ -89,7 +96,7 @@ public class ANNTraining
                             sum += wxh.get(k).get(l) + x.get(l);
                         }
                         
-                        yh[k] = 1 / (1 + Math.exp(-sum));
+                        yh[k] = 1 / (1 + Math.exp(-sum)) + bh[k];
                     }
                 }
             }

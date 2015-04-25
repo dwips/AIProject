@@ -10,6 +10,9 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import jxl.Sheet;
+import jxl.Workbook;
+import jxl.read.biff.BiffException;
 
 /**
  * @author Fuad Ikhlasul Amal
@@ -20,7 +23,7 @@ public class DataHandler
     
     private BufferedReader reader;
     
-    private String errorMessage = "Error in class DataHandler!!! ";
+    private String errorMessage = "End of DataHandler ";
     
     private int nInput;
     private int nOutput;
@@ -63,12 +66,12 @@ public class DataHandler
         
         try
         {
+            ArrayList<ArrayList<Double>> dx = new ArrayList<>();
+            ArrayList<ArrayList<Double>> dy = new ArrayList<>();
+            
             if(type.equals("txt"))
             {
                 reader = new BufferedReader(new FileReader(f));
-                
-                ArrayList<ArrayList<Double>> dx = new ArrayList<>();
-                ArrayList<ArrayList<Double>> dy = new ArrayList<>();
                 
                 String line;
                 
@@ -85,7 +88,8 @@ public class DataHandler
                     ArrayList<Double> x = new ArrayList<>();
                     ArrayList<Double> y = new ArrayList<>();
                     
-                    for (int i = 0; i < elm.length; i++) {
+                    for (int i = 0; i < elm.length; i++) 
+                    {
                         Double d = Double.parseDouble(elm[i]);
                         if(i < nInput)
                         {
@@ -100,18 +104,70 @@ public class DataHandler
                     dx.add(x);
                     dy.add(y);
                 }
-                
-                data.setX(dx);
-                data.setY(dy);
             }
+            else if(type.equals("xls"))
+            {
+                Workbook wb = Workbook.getWorkbook(f);
+                Sheet sheet = wb.getSheet(0);
+                int nAttr = sheet.getColumns();
+                int nData = sheet.getRows();
+                
+                if( !isValidInputOutput(nAttr) )
+                {
+                    nOutput = 1;
+                    nInput = nAttr - nOutput;
+                }
+                
+                for (int i = 0; i < nData; i++) 
+                {
+                    ArrayList<Double> x = new ArrayList<>();
+                    ArrayList<Double> y = new ArrayList<>();
+                    
+                    for (int j = 0; j < nAttr; j++) 
+                    {   
+                        Double d = Double.parseDouble(sheet.getCell(j, i).getContents());
+                        
+                        if(j < nInput)
+                        {
+                            x.add(d);
+                        }
+                        else
+                        {
+                            y.add(d);
+                        }
+                    }
+                    
+                    dx.add(x);
+                    dy.add(y);
+                }
+            }
+            else
+            {
+                errorMessage += "File data source is not allowed.";
+                System.exit(0);
+            }
+            
+            System.out.println(dx.toString());
+            System.out.println(dy.toString());
+            
+            data.setX(dx);
+            data.setY(dy);
         } 
-        catch (FileNotFoundException ex) 
+        catch (FileNotFoundException ex)
         {
             errorMessage += "File not found!!!";
         } 
         catch (IOException ex) 
         {
             errorMessage += "IO failure!!!";
+        }
+        catch (BiffException ex)
+        {
+            errorMessage += "Error while try to open Excel file!!!";
+        }
+        finally
+        {
+            System.out.println(errorMessage);
         }
     }
     
